@@ -1,0 +1,6 @@
+time=2026-02-06T02:01:55.408+05:30 level=INFO msg="starting linkbio" env=development port=8080 log_level=DEBUG
+time=2026-02-06T02:01:55.412+05:30 level=INFO msg="database connected" path=./data/linkbio.db
+time=2026-02-06T02:01:55.414+05:30 level=INFO msg="database migrations completed"
+time=2026-02-06T02:01:55.416+05:30 level=INFO msg="server listening" port=8080
+time=2026-02-06T02:01:55.417+05:30 level=INFO msg="server starting" addr=:8080
+time=2026-02-06T02:01:55.419+05:30 level=ERROR msg="server error" error="listen tcp :8080: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted."

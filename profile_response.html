@@ -1,0 +1,170 @@
+﻿
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin - LinkBio</title>
+    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    
+    
+    <link rel="stylesheet" href="/static/css/app.css">
+    
+    
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    
+<meta name="description" content="">
+
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    
+<div x-data="{ darkMode: false }" 
+     :class="darkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'"
+     class="min-h-screen transition-colors duration-300">
+    
+    
+    <div class="fixed inset-0 overflow-hidden pointer-events-none opacity-30 dark:opacity-20">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-300 rounded-full blur-3xl" :class="darkMode && 'bg-indigo-600'"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl" :class="darkMode && 'bg-purple-600'"></div>
+    </div>
+    
+    <div class="relative z-10 container mx-auto px-6 py-12 max-w-lg min-h-screen flex flex-col">
+        
+        <div class="text-center mb-10" data-aos="fade-down" data-aos-duration="800">
+            
+            <div class="relative inline-block mb-6">
+                <div class="w-28 h-28 rounded-3xl avatar-gradient flex items-center justify-center text-5xl font-bold text-white avatar-glow">
+                    
+                    A
+                    
+                </div>
+                <div class="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-green-500 border-4 border-white flex items-center justify-center" :class="darkMode && 'border-gray-900'">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+            
+            
+            <h1 class="text-2xl font-bold mb-1" :class="darkMode ? 'text-white' : 'text-gray-900'">admin</h1>
+            <p class="text-gray-500 mb-3" :class="darkMode && 'text-gray-400'">@admin</p>
+            
+        </div>
+        
+        
+        <div class="flex justify-center mb-8" data-aos="fade-up" data-aos-delay="100">
+            <button @click="darkMode = !darkMode"
+                    class="flex items-center gap-2 px-4 py-2 rounded-full glass-light text-sm font-medium transition-all"
+                    :class="darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-white'">
+                <template x-if="!darkMode">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                        Dark Mode
+                    </span>
+                </template>
+                <template x-if="darkMode">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        Light Mode
+                    </span>
+                </template>
+            </button>
+        </div>
+        
+        
+        <div class="flex-1 space-y-4" id="links-container">
+            
+                
+                <a href="/api/v1/analytics/click/1" 
+                   target="_blank"
+                   rel="noopener"
+                   class="link-button block w-full p-5 rounded-2xl glass-light text-center font-medium"
+                   :class="darkMode ? 'text-white' : 'text-gray-800'"
+                   data-aos="fade-up" 
+                   data-aos-delay="0">
+                    <span class="text-lg">fdfdf</span>
+                </a>
+                
+                <a href="/api/v1/analytics/click/4" 
+                   target="_blank"
+                   rel="noopener"
+                   class="link-button block w-full p-5 rounded-2xl glass-light text-center font-medium"
+                   :class="darkMode ? 'text-white' : 'text-gray-800'"
+                   data-aos="fade-up" 
+                   data-aos-delay="50">
+                    <span class="text-lg">hhhh</span>
+                </a>
+                
+            
+        </div>
+        
+        
+        <div class="text-center mt-12 pt-8 border-t" :class="darkMode ? 'border-gray-800' : 'border-gray-200'" data-aos="fade-up">
+            <a href="/" class="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors" :class="darkMode ? 'hover:text-gray-300' : 'hover:text-gray-600'">
+                <span class="font-medium text-gradient">LinkBio</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+    
+    
+    <script src="/static/js/app.js"></script>
+    
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                duration: 600,
+                easing: 'ease-out-cubic',
+                once: true,
+                offset: 20
+            });
+        }
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.from('.link-button', {
+                y: 20,
+                stagger: 0.08,
+                duration: 0.5,
+                ease: 'power3.out',
+                delay: 0.2
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
+
