@@ -75,4 +75,103 @@
 
 ---
 
+## GSAP + AOS + HTMX Integration — app.js
+
+> 📱 "ഇപ്പോൾ animations add ചെയ്യാം. ഇത് app-നെ professional look കൊടുക്കും."
+
+**⌨️ Create `web/static/js/app.js`:**
+```js
+/**
+ * LinkBio - Main JavaScript
+ * Handles animations, HTMX events, and interactions
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+    initAOS();
+    initGSAP();
+    initHTMXHandlers();
+});
+
+// AOS (Animate on Scroll)
+function initAOS() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 600,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 50,
+        });
+    }
+}
+
+// GSAP Animations
+function initGSAP() {
+    if (typeof gsap === 'undefined') return;
+
+    // Navbar fade in from top
+    gsap.from('nav', { 
+        opacity: 0, y: -20, duration: 0.8, ease: 'power3.out' 
+    });
+
+    // Profile page: link buttons stagger animation
+    const linkButtons = document.querySelectorAll('.link-button');
+    if (linkButtons.length > 0) {
+        gsap.from('.link-button', {
+            opacity: 0, y: 30, stagger: 0.08,
+            duration: 0.6, ease: 'power3.out', delay: 0.4
+        });
+    }
+
+    // Hover effects — scale up buttons
+    document.querySelectorAll('.btn-primary').forEach(function(btn) {
+        btn.addEventListener('mouseenter', function() {
+            gsap.to(this, { scale: 1.02, duration: 0.2 });
+        });
+        btn.addEventListener('mouseleave', function() {
+            gsap.to(this, { scale: 1, duration: 0.2 });
+        });
+    });
+
+    // Link cards — subtle slide on hover
+    document.querySelectorAll('.link-card').forEach(function(card) {
+        card.addEventListener('mouseenter', function() {
+            gsap.to(this, { x: 4, duration: 0.2 });
+        });
+        card.addEventListener('mouseleave', function() {
+            gsap.to(this, { x: 0, duration: 0.2 });
+        });
+    });
+}
+
+// HTMX event handlers
+function initHTMXHandlers() {
+    // Show errors from HTMX responses
+    document.body.addEventListener('htmx:beforeSwap', function(evt) {
+        if (evt.detail.xhr.status >= 400) {
+            evt.detail.shouldSwap = true;
+            evt.detail.target.innerHTML = '<div class="error-message rounded-xl px-4 py-3 text-sm">' 
+                + evt.detail.xhr.responseText + '</div>';
+        }
+    });
+
+    // Re-init AOS after HTMX adds new elements
+    document.body.addEventListener('htmx:afterSwap', function() {
+        if (typeof AOS !== 'undefined') AOS.refresh();
+    });
+}
+```
+
+> 🧠 **Explain key points:**
+> 📱 "typeof gsap === 'undefined' — CDN load fail ആയാൽ crash ആകില്ല. Defensive coding."
+> 📱 "gsap.from() — element-ന്റെ initial state define ചെയ്യുന്നു. opacity: 0, y: 30 — invisible + below. GSAP animate ചെയ്ത് normal position-ലേക്ക് bring ചെയ്യും."
+> 📱 "stagger: 0.08 — ഓരോ link button 80ms gap-ൽ appear ആകും. Waterfall effect!"
+
+> 🎯 **Analogy:**
+> 📱 "stagger ഒരു dominos falling പോലെ. ഒരുമിച്ച് fall ചെയ്യുന്നതിന് പകരം one-by-one fall ചെയ്യുന്നു. Professional feel!"
+
+> 🧠 **HTMX + AOS integration:**
+> 📱 "htmx:afterSwap — HTMX new HTML insert ചെയ്യുമ്പോൾ AOS.refresh() call ചെയ്യുന്നു. ഇല്ലെങ്കിൽ new elements-ന് scroll animation ഉണ്ടാകില്ല."
+
+---
+
 > 🎥 **Transition:** "App complete! ഇനി deploy."
