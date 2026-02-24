@@ -108,6 +108,61 @@ func Migrate(db *sql.DB, log *slog.Logger) error {
 
 ---
 
+## Migration SQL Files (Reference)
+
+📱 **Narration**:
+> "Database migrations code-ൽ inline ആണ്. But reference-ന് separate SQL files-ഉം create ചെയ്യാം."
+
+⌨️ **Create `migrations/001_create_users.sql`:**
+```sql
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    display_name TEXT DEFAULT '',
+    bio TEXT DEFAULT '',
+    avatar_url TEXT DEFAULT '',
+    theme TEXT DEFAULT 'light',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+⌨️ **Create `migrations/002_create_links.sql`:**
+```sql
+CREATE TABLE IF NOT EXISTS links (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    url TEXT NOT NULL,
+    icon TEXT DEFAULT '',
+    position INTEGER DEFAULT 0,
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+⌨️ **Create `migrations/003_create_analytics.sql`:**
+```sql
+CREATE TABLE IF NOT EXISTS analytics (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    link_id INTEGER,
+    event_type TEXT NOT NULL,
+    referrer TEXT DEFAULT '',
+    user_agent TEXT DEFAULT '',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (link_id) REFERENCES links(id) ON DELETE CASCADE
+);
+```
+
+🧠 **Explain:**
+> 📱 "ഈ files reference ആണ്. App-ൽ db.go inline migrations use ചെയ്യും. But SQL files keep ചെയ്യുന്നത് documentation-ന് നല്ലത്. Future-ൽ migration tool use ചെയ്യുമ്പോൾ ഈ files directly use ചെയ്യാം."
+
+---
+
 ## User Repository
 
 **⌨️ Create `internal/repository/user.go`:**

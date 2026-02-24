@@ -344,6 +344,61 @@ tmp/
 
 ---
 
+## 14:30 — Create Makefile
+
+📱 **Narration**:
+> "Development workflow easy ആക്കാൻ ഒരു Makefile create ചെയ്യാം. ഇത് required അല്ല — just a convenience tool. Long commands remember ചെയ്യണ്ട."
+
+⌨️ **Create `Makefile`**:
+```makefile
+.PHONY: run build test clean dev tidy
+
+# Run the server
+run:
+	go run ./cmd/server
+
+# Build binary
+build:
+	go build -o bin/linkbio.exe ./cmd/server
+
+# Run tests
+test:
+	go test -v ./...
+
+# Clean build artifacts
+clean:
+	rm -rf bin/ data/*.db
+
+# Download dependencies
+tidy:
+	go mod tidy
+
+# Development with hot reload (requires air)
+dev:
+	air
+
+# Create .env from example
+env:
+	cp .env.example .env
+```
+
+🧠 **Explain each command**:
+
+> "`make run` — server quick ആയി start ചെയ്യാൻ. `go run ./cmd/server` full command type ചെയ്യണ്ട."
+
+> "`make build` — binary compile ചെയ്യാൻ. `bin/linkbio.exe` ആയി output ആകും."
+
+> "`make test` — എല്ലാ tests run ചെയ്യാൻ. `-v` verbose — ഓരോ test-ന്റെ result കാണിക്കും."
+
+> "`make clean` — build artifacts-ഉം database file-ഉം delete ചെയ്യാൻ. Fresh start വേണമെങ്കിൽ."
+
+> "`.PHONY` — Make-നോട് പറയുന്നു ഇവ files അല്ല, commands ആണ്. `run` എന്ന folder ഉണ്ടെങ്കിലും `make run` command execute ചെയ്യും."
+
+📱 **Narration**:
+> "Makefile ഒരു convenience tool ആണ്. ഇത് ഇല്ലാതെയും project run ചെയ്യാം — direct go commands use ചെയ്താൽ മതി. But team projects-ൽ Makefile ഉണ്ടെങ്കിൽ everyone same commands use ചെയ്യും."
+
+---
+
 ## 14:45 — Verify Setup
 
 📱 **Narration**:

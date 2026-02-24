@@ -121,6 +121,47 @@ func (h *LinkHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 ---
 
+## Link Partial Template
+
+> 📱 "Create handler return ചെയ്യുന്ന HTML template ഇതാണ്. HTMX response-ൽ ഈ partial render ചെയ്ത് send ചെയ്യും."
+
+**⌨️ Create `web/templates/partials/link.html`:**
+```html
+<div class="link-card flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-800/50" 
+     data-link-id="{{.ID}}">
+    <button class="drag-handle cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+        </svg>
+    </button>
+    <div class="flex-1 min-w-0">
+        <h3 class="font-medium text-gray-900 dark:text-white truncate">{{.Title}}</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{.URL}}</p>
+    </div>
+    <button hx-delete="/api/v1/links/{{.ID}}"
+            hx-target="closest .link-card"
+            hx-swap="outerHTML swap:200ms"
+            hx-confirm="Delete this link?"
+            class="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+    </button>
+</div>
+```
+
+> 🧠 **Explain template structure:**
+> 📱 "ഈ partial template-ആണ് Create handler-ൽ `template.ParseFiles(\"web/templates/partials/link.html\")` load ചെയ്യുന്നത്. HTMX response-ൽ ഈ HTML client-ന് send ചെയ്യും."
+> 📱 "`data-link-id=\"{{.ID}}\"` — SortableJS drag-drop reorder-ന് ഈ attribute use ചെയ്യും. ഓരോ link-ന്റെയും ID track ചെയ്യാൻ."
+> 📱 "`drag-handle` class — ഈ button മാത്രം drag trigger ചെയ്യും. Card-ൽ anywhere drag ചെയ്യാൻ allow ചെയ്യില്ല."
+> 📱 "`hx-delete=\"/api/v1/links/{{.ID}}\"` — delete button click ചെയ്യുമ്പോൾ HTMX DELETE request send ചെയ്യും."
+> 📱 "`hx-target=\"closest .link-card\"` — parent `.link-card` div find ചെയ്യും. ഈ entire card-ആണ് target."
+> 📱 "`hx-swap=\"outerHTML swap:200ms\"` — card full remove ചെയ്യും, 200ms fade animation-ഓടെ. Smooth UX."
+> 📱 "`hx-confirm=\"Delete this link?\"` — browser confirmation dialog show ചെയ്യും. Accidental delete prevent ചെയ്യാൻ."
+> 📱 "`truncate` class — long titles-ഉം URLs-ഉം ellipsis (...) ആയി cut ചെയ്യും. Layout break ആകില്ല."
+
+---
+
 ## Update, Delete, Reorder
 
 **⌨️ Continue:**

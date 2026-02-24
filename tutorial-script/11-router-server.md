@@ -175,4 +175,109 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 ---
 
+## Entry Point — main.go
+
+> 📱 "Server struct ready. ഇനി actual entry point — main.go. Application start, config load, graceful shutdown — എല്ലാം ഇവിടെ."
+
+**⌨️ Create `cmd/server/main.go`:**
+```go
+package main
+
+import (
+	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"linkbio/internal/config"
+	"linkbio/internal/pkg/logger"
+	"linkbio/internal/server"
+)
+
+func main() {
+	// Load configuration
+	cfg, err := config.Load()
+	if err != nil {
+		panic("failed to load config: " + err.Error())
+	}
+
+	// Initialize logger
+	var log = logger.New(cfg.LogLevel)
+	if cfg.IsDevelopment() {
+		log = logger.NewDevelopment()
+	}
+
+	log.Info("starting linkbio",
+		"env", cfg.Env,
+		"port", cfg.Port,
+		"log_level", cfg.LogLevel,
+	)
+
+	// Create server
+	srv, err := server.New(cfg, log)
+	if err != nil {
+		log.Error("failed to create server", "error", err)
+		os.Exit(1)
+	}
+
+	// Channel to listen for errors from server
+	serverErrors := make(chan error, 1)
+
+	// Start server in goroutine
+	go func() {
+		log.Info("server listening", "port", cfg.Port)
+		if err := srv.Start(); err != nil && err != http.ErrServerClosed {
+			serverErrors <- err
+		}
+	}()
+
+	// Channel to listen for interrupt signals
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	// Block until we receive a signal or error
+	select {
+	case err := <-serverErrors:
+		log.Error("server error", "error", err)
+		os.Exit(1)
+
+	case sig := <-shutdown:
+		log.Info("shutdown signal received", "signal", sig.String())
+
+		// Create context with timeout for graceful shutdown
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		// Attempt graceful shutdown
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Error("graceful shutdown failed", "error", err)
+			os.Exit(1)
+		}
+
+		log.Info("server stopped gracefully")
+	}
+}
+```
+
+> 🧠 **Config loading:**
+> 📱 "config.Load() — .env file-ൽ നിന്ന് port, database path, session keys എല്ലാം load ചെയ്യും. Fail ആയാൽ panic — config ഇല്ലാതെ server start ചെയ്യണ്ട."
+
+> 🧠 **Logger — dev vs prod:**
+> 📱 "Development mode-ൽ logger.NewDevelopment() — pretty, human-readable logs. Production-ൽ logger.New() — structured JSON logs. cfg.IsDevelopment() check ചെയ്ത് switch ചെയ്യും."
+
+> 🧠 **Server creation:**
+> 📱 "server.New(cfg, log) — previous section-ൽ define ചെയ്ത Server struct create ചെയ്യും. DB connect, repositories init, middleware setup, router wire — എല്ലാം ഇതിൽ."
+
+> 🧠 **Graceful shutdown — signal handling:**
+> 📱 "Server goroutine-ൽ run ചെയ്യും. Main goroutine block ചെയ്ത് wait ചെയ്യും — `select` statement use ചെയ്ത്."
+> 📱 "`os.Interrupt` — Ctrl+C press ചെയ്യുമ്പോൾ. `syscall.SIGTERM` — Docker/Kubernetes container stop ചെയ്യുമ്പോൾ."
+> 📱 "Signal receive ചെയ്താൽ 10 second timeout-ൽ graceful shutdown. Active requests complete ചെയ്യാൻ time കൊടുക്കും, പക്ഷേ 10 seconds കഴിഞ്ഞാൽ force stop."
+
+> 🧠 **`select` pattern:**
+> 📱 "Go-യിലെ powerful pattern — two channels concurrent ആയി listen ചെയ്യും. Server error വന്നാൽ first case. Shutdown signal വന്നാൽ second case. ഏത് ആദ്യം വരുന്നോ അത് execute ചെയ്യും."
+
+---
+
 > 🎥 **Transition:** "Backend complete! ഇനി frontend — templates."

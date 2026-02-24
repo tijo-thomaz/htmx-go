@@ -12,23 +12,38 @@
 package response
 
 import (
+	"encoding/json"
 	"log/slog"
 	"net/http"
 )
 
+// Responder handles HTTP responses
 type Responder struct {
 	log *slog.Logger
 }
 
+// New creates a new Responder
 func New(log *slog.Logger) *Responder {
 	return &Responder{log: log}
 }
 
+// JSON sends a JSON response
+func (r *Responder) JSON(w http.ResponseWriter, status int, data any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		r.log.Error("json encoding failed", "error", err)
+	}
+}
+
+// Error sends an error response
 func (r *Responder) Error(w http.ResponseWriter, status int, message string) {
+	r.log.Warn("error response", "status", status, "message", message)
 	w.WriteHeader(status)
 	w.Write([]byte(message))
 }
 
+// HXRedirect sends an HTMX redirect header
 func (r *Responder) HXRedirect(w http.ResponseWriter, url string) {
 	w.Header().Set("HX-Redirect", url)
 	w.WriteHeader(http.StatusOK)
@@ -36,6 +51,7 @@ func (r *Responder) HXRedirect(w http.ResponseWriter, url string) {
 ```
 
 > 🧠 📱 "HXRedirect — HTMX forms-ന് redirect ചെയ്യാൻ. Normal HTTP redirect HTMX ignore ചെയ്യും. HX-Redirect header set ചെയ്താൽ HTMX client-side redirect ചെയ്യും."
+> 📱 "JSON() — API response-ന്. Content-Type set ചെയ്ത് JSON encode ചെയ്യും."
 
 ---
 

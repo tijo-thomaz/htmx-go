@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	"linkbio/internal/model"
@@ -63,8 +64,10 @@ func (h *ProfileHandler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Record page view asynchronously
+	// ⚠️ Use context.Background(), NOT r.Context()!
+	// r.Context() gets cancelled after response is sent, killing the DB write.
 	go func() {
-		h.analyticsRepo.RecordPageView(r.Context(), user.ID, r.Referer(), r.UserAgent())
+		h.analyticsRepo.RecordPageView(context.Background(), user.ID, r.Referer(), r.UserAgent())
 	}()
 
 	h.log.Info("profile data", "username", username, "user_id", user.ID, "links_count", len(links))

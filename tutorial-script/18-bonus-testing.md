@@ -25,19 +25,72 @@ import (
 	"os"
 	"testing"
 
-	"linkbio/internal/repository"
+	_ "modernc.org/sqlite"
 )
 
+// TestDB creates an in-memory database for testing
 func TestDB(t *testing.T) *sql.DB {
 	t.Helper()
+
 	db, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("failed to open test db: %v", err)
 	}
-	log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelError}))
-	if err := repository.Migrate(db, log); err != nil {
-		t.Fatalf("failed to migrate test db: %v", err)
+
+	// IMPORTANT: SQLite :memory: creates separate DB per connection
+	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+
+	// Enable foreign keys
+	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
+		t.Fatalf("failed to enable foreign keys: %v", err)
 	}
+
+	// Run migrations inline to avoid import cycle
+	migrations := []string{
+		`CREATE TABLE IF NOT EXISTS users (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			username TEXT UNIQUE NOT NULL,
+			email TEXT UNIQUE NOT NULL,
+			password_hash TEXT NOT NULL,
+			display_name TEXT DEFAULT '',
+			bio TEXT DEFAULT '',
+			avatar_url TEXT DEFAULT '',
+			theme TEXT DEFAULT 'light',
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)`,
+		`CREATE TABLE IF NOT EXISTS links (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			user_id INTEGER NOT NULL,
+			title TEXT NOT NULL,
+			url TEXT NOT NULL,
+			icon TEXT DEFAULT '',
+			position INTEGER DEFAULT 0,
+			is_active INTEGER DEFAULT 1,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+		)`,
+		`CREATE TABLE IF NOT EXISTS analytics (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			user_id INTEGER NOT NULL,
+			link_id INTEGER,
+			event_type TEXT NOT NULL,
+			referrer TEXT DEFAULT '',
+			user_agent TEXT DEFAULT '',
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+			FOREIGN KEY (link_id) REFERENCES links(id) ON DELETE CASCADE
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_links_user_id ON links(user_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_analytics_user_id ON analytics(user_id)`,
+	}
+
+	for _, migration := range migrations {
+		if _, err := db.Exec(migration); err != nil {
+			t.Fatalf("failed to run migration: %v", err)
+		}
+	}
+
 	t.Cleanup(func() { db.Close() })
 	return db
 }
@@ -50,6 +103,9 @@ func TestLogger() *slog.Logger {
 > 🧠 📱 "t.Helper() — test fail line number correct ആക്കും."
 > 📱 ":memory: — in-memory SQLite. Test-ന് ശേഷം auto-delete."
 > 📱 "t.Cleanup() — test end-ൽ db.Close() auto-call."
+> 📱 "⚠️ Import cycle avoid ചെയ്യാൻ migrations inline ആണ്. testutil package-ൽ repository import ചെയ്താൽ cycle ആകും!"
+> 📱 "SetMaxOpenConns(1) — SQLite :memory: database ഓരോ connection-നും separate ആണ്. One connection = consistent data."
+> 📱 "PRAGMA foreign_keys = ON — SQLite default-ൽ foreign keys OFF ആണ്! Tests-ൽ ON ചെയ്യണം."
 
 ---
 
