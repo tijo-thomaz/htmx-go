@@ -6,7 +6,7 @@ run:
 
 # Build binary
 build:
-	go build -o bin/linkbio ./cmd/server
+	go build -o bin/linkbio.exe ./cmd/server
 
 # Run tests
 test:

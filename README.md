@@ -63,7 +63,6 @@ LinkBio allows users to create a single page with all their important links. Sha
 | **Link Animations** | Fade-in on scroll | AOS |
 | **Hover Effects** | Smooth button animations | GSAP |
 | **Click Analytics** | Track link clicks and page views | Go |
-| **QR Code** | Generate QR for profile URL | Go Library |
 | **Deploy** | Live deployment | Railway/Fly.io |
 
 ### Future Enhancements (Not in Tutorial)
@@ -640,7 +639,7 @@ func getEnv(key, fallback string) string {
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/linkbio.git
+git clone https://github.com/tijo-thomaz/htmx-go.git
 cd linkbio
 
 # Install Go dependencies
@@ -680,7 +679,7 @@ run:
 	go run ./cmd/server
 
 build:
-	go build -o bin/linkbio ./cmd/server
+	go build -o bin/linkbio.exe ./cmd/server
 
 test:
 	go test -v ./...
@@ -708,8 +707,7 @@ go 1.22
 require (
     github.com/go-chi/chi/v5 v5.0.12       // Router with namespace support
     github.com/gorilla/sessions v1.2.2     // Session management
-    github.com/mattn/go-sqlite3 v1.14.22   // SQLite driver (CGO)
-    github.com/skip2/go-qrcode v0.0.0      // QR code generation
+    modernc.org/sqlite v1.29.5             // SQLite driver (pure Go, no CGO)
     golang.org/x/crypto v0.21.0            // Password hashing (bcrypt)
     golang.org/x/time v0.5.0               // Rate limiting
     github.com/joho/godotenv v1.5.1        // Environment file loading

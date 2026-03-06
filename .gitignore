@@ -36,3 +36,9 @@ Thumbs.db
 
 # Air (hot reload)
 tmp/
+
+# Debug/test output files
+*.html
+!web/templates/**/*.html
+stderr.txt
+stdout.txt
