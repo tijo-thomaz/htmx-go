@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
 
 	"linkbio/internal/middleware"
@@ -76,5 +77,27 @@ func (h *DashboardHandler) Index(w http.ResponseWriter, r *http.Request) {
 	if err := templates.Render(w, "dashboard.html", data); err != nil {
 		h.log.Error("template error", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
+// Stats returns the stats partial HTML for HTMX polling
+func (h *DashboardHandler) Stats(w http.ResponseWriter, r *http.Request) {
+	userID := middleware.UserIDFromContext(r.Context())
+
+	analytics, err := h.analyticsRepo.GetSummary(r.Context(), userID, 28)
+	if err != nil {
+		h.log.Error("analytics error", "error", err)
+		analytics = nil
+	}
+
+	tmpl, err := template.ParseFiles("web/templates/partials/stats.html")
+	if err != nil {
+		h.log.Error("template error", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := tmpl.Execute(w, analytics); err != nil {
+		h.log.Error("template error", "error", err)
 	}
 }

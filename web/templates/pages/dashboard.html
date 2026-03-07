@@ -51,8 +51,9 @@
         <div class="grid lg:grid-cols-3 gap-8">
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Stats Row -->
-                <div class="grid grid-cols-2 gap-4">
+                <!-- Stats Row (auto-refreshes every 10s via HTMX) -->
+                <div id="stats-row" class="grid grid-cols-2 gap-4"
+                     hx-get="/dashboard/stats" hx-trigger="every 10s" hx-swap="outerHTML">
                     <div class="stat-card bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">

@@ -30,7 +30,6 @@ func New(h *handler.Handler, mw *middleware.Middleware) *chi.Mux {
 	// Global middleware — every request goes through these
 	r.Use(mw.Recovery)   // Catch panics
 	r.Use(mw.Logger)     // Log requests
-	r.Use(mw.RateLimit)  // Prevent abuse
 
 	r.Get("/health", h.Health.Check)
 
@@ -68,6 +67,7 @@ func New(h *handler.Handler, mw *middleware.Middleware) *chi.Mux {
 	r.Route("/dashboard", func(r chi.Router) {
 		r.Use(mw.Auth)
 		r.Get("/", h.Dashboard.Index)
+		r.Get("/stats", h.Dashboard.Stats) // HTMX polling endpoint
 	})
 
 	return r
@@ -133,8 +133,8 @@ func New(cfg *config.Config, log *slog.Logger) (*Server, error) {
 
 	resp := response.New(log)
 
-	// ⚠️ 4 params: log, signingKey, encryptionKey, rateLimit
-	mw := middleware.New(log, cfg.SessionSecret, cfg.SessionEncKey, cfg.RateLimit)
+	// ⚠️ 3 params: log, signingKey, encryptionKey
+	mw := middleware.New(log, cfg.SessionSecret, cfg.SessionEncKey)
 
 	h := handler.New(&handler.Dependencies{
 		Log:           log,
@@ -169,7 +169,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 }
 ```
 
-> 🧠 📱 "middleware.New — 4 parameters: log, signingKey, encryptionKey, rateLimit."
+> 🧠 📱 "middleware.New — 3 parameters: log, signingKey, encryptionKey."
 > 📱 "cfg.SessionEncKey — empty ആയാൽ signing only + warning. 32 bytes ആയാൽ AES-256 encryption."
 > 📱 "ReadTimeout, WriteTimeout, IdleTimeout — production security. Slow clients server block ചെയ്യില്ല."
 
@@ -281,3 +281,30 @@ func main() {
 ---
 
 > 🎥 **Transition:** "Backend complete! ഇനി frontend — templates."
+
+---
+
+## 🎬 Part 2 Ending — CTA
+
+> 🔊 **Outro music fade in**
+
+📱 **Narration**:
+> "Backend complete ആയി!"
+>
+> "Database, auth, CRUD, click tracking, analytics — full backend working."
+>
+> "Part 3-ൽ frontend build ചെയ്യും — HTMX magic, Alpine.js, beautiful Tailwind UI, dark mode, drag-drop."
+>
+> "ഇത് miss ആകരുത് — Subscribe ചെയ്യൂ, bell icon press ചെയ്യൂ!"
+>
+> "Code GitHub-ൽ ഉണ്ട്. അടുത്ത video-ൽ കാണാം!"
+
+> 🔊 **End screen**: Subscribe button + Part 3 preview card
+
+---
+
+## 📝 Part 2 Editing Notes
+
+- Add end screen with subscribe + next video link
+- Quick montage of what Part 3 will look like (show finished app screenshots)
+- Total Part 2 runtime target: ~45 minutes

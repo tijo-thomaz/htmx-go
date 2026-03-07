@@ -49,7 +49,7 @@
 
 ## Call to Action
 
-> 📱 "ഈ video helpful ആയിരുന്നെങ്കിൽ Like button അടിക്കൂ. Subscribe ചെയ്യൂ. Bell icon press ചെയ്യൂ."
+> 📱 "ഈ series helpful ആയിരുന്നെങ്കിൽ Like button അടിക്കൂ. Subscribe ചെയ്യൂ. Bell icon press ചെയ്യൂ."
 > 📱 "Comment-ൽ നിങ്ങളുടെ questions ഇടൂ. GitHub link description-ൽ ഉണ്ട്."
 > 📱 "അടുത്ത video-ൽ കാണാം. നന്ദി!"
 

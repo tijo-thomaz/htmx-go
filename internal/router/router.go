@@ -17,7 +17,6 @@ func New(h *handler.Handler, mw *middleware.Middleware) *chi.Mux {
 	// Global middleware chain
 	r.Use(mw.Recovery)   // Recover from panics
 	r.Use(mw.Logger)     // Log all requests
-	r.Use(mw.RateLimit)  // Rate limiting
 
 	// Health check (no auth required)
 	r.Get("/health", h.Health.Check)
@@ -60,6 +59,7 @@ func New(h *handler.Handler, mw *middleware.Middleware) *chi.Mux {
 	r.Route("/dashboard", func(r chi.Router) {
 		r.Use(mw.Auth)
 		r.Get("/", h.Dashboard.Index)
+		r.Get("/stats", h.Dashboard.Stats)
 	})
 
 	return r

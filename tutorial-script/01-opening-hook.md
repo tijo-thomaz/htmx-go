@@ -12,7 +12,28 @@
 🎥 **Camera**: Facecam or direct screen recording. Show the finished LinkBio app in browser.
 
 📱 **Narration**:
-> "നമസ്കാരം! ഇന്ന് നമ്മൾ ഒരു production-ready link-in-bio platform build ചെയ്യാൻ പോകുന്നു — Linktree പോലെ. ഇത് ഒരു beginner project അല്ല — ഇത് real companies use ചെയ്യുന്ന patterns ആണ്."
+> "നമസ്കാരം! Kraken Coder-ലേക്ക് സ്വാഗതം."
+>
+> "ഈ channel-ൽ നമ്മൾ discuss ചെയ്യുന്നത്...
+> frontend JS-heavy architecture...
+> server-driven architecture...
+> Golang industry patterns — ഇതൊക്കെയാണ്."
+>
+> "ഇന്ന് ഒരു interesting question നോക്കാം.
+> Linktree അറിയാമല്ലോ?
+> Influencers-ന് links ഒരു page-ൽ aggregate ചെയ്യാൻ ഉള്ള platform."
+>
+> "ഇത് build ചെയ്യാൻ React വേണോ? Angular വേണോ?
+> ...അതോ hypermedia-based tools മതിയോ?
+> Alpine, HTMX, Golang — ഇത് മാത്രം മതിയോ?"
+>
+> "Advantage എന്താ?
+> React background-ൽ നിന്ന് വരുന്ന ആളുകൾക്ക്...
+> ഈ aspect evaluate ചെയ്യാൻ ഒരു നല്ല chance ആണ് ഈ first video."
+>
+> "Web app enthusiast ആണോ?
+> എങ്കിൽ deep dive ചെയ്യാം.
+> Golang, HTMX, Alpine JS — ഒരു Linktree clone build ചെയ്യാം!"
 
 ---
 

@@ -1,3 +1,16 @@
+# 🎬 PART 2 — Backend & Logic
+
+> 📱 **Part 2 Intro** (show on screen before Scene 5):
+> "Part 1-ൽ നമ്മൾ project setup, config, logging — foundation build ചെയ്തു. Server running ആണ്."
+>
+> "ഇന്ന് real code — database, authentication, handlers — full backend build ചെയ്യും!"
+>
+> "Ready ആണോ? Let's go!"
+
+> 🔊 **Intro music** (3 seconds)
+
+---
+
 # Scene 5: Database Models (20:00 - 23:00)
 
 > 🎬 **Previous Scene**: Logging (Scene 4) — we built structured logging with `slog`

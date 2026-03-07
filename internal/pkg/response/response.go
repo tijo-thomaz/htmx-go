@@ -28,20 +28,11 @@ func (r *Responder) JSON(w http.ResponseWriter, status int, data any) {
 	}
 }
 
-// Error sends an error response
+// Error sends an error response (always HTML for simplicity since all clients are HTMX/browser)
 func (r *Responder) Error(w http.ResponseWriter, status int, message string) {
 	r.log.Warn("error response", "status", status, "message", message)
-
-	// For HTMX requests, return HTML error
-	if w.Header().Get("HX-Request") == "true" {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(status)
-		w.Write([]byte(`<div class="error">` + message + `</div>`))
-		return
-	}
-
-	// For API requests, return JSON
-	r.JSON(w, status, map[string]string{"error": message})
+	w.WriteHeader(status)
+	w.Write([]byte(message))
 }
 
 // HXRedirect sends an HTMX redirect header

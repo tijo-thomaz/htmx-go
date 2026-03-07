@@ -29,7 +29,6 @@ package config
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -42,7 +41,6 @@ type Config struct {
 	DatabasePath  string
 	SessionSecret string
 	SessionEncKey string
-	RateLimit     int
 }
 ```
 
@@ -63,8 +61,6 @@ type Config struct {
 
 > "`SessionEncKey` — session data encrypt ചെയ്യാൻ. Content hide ചെയ്യാൻ — locked box! Exactly 32 bytes."
 
-> "`RateLimit` — int ആണ്. Per-IP requests per second."
-
 ---
 
 ⌨️ **Continue typing — Load function**:
@@ -82,7 +78,6 @@ func Load() (*Config, error) {
 		DatabasePath:  getEnv("DATABASE_PATH", "./data/linkbio.db"),
 		SessionSecret: getEnv("SESSION_SECRET", "change-me-in-production"),
 		SessionEncKey: getEnv("SESSION_ENCRYPTION_KEY", ""),
-		RateLimit:     getEnvInt("RATE_LIMIT", 10),
 	}, nil
 }
 ```
@@ -99,8 +94,6 @@ func Load() (*Config, error) {
 > "`getEnv()` — environment variable read ചെയ്യും. ഇല്ലെങ്കിൽ default value return ചെയ്യും. ഇത് നമ്മൾ next write ചെയ്യും."
 
 > "`SessionEncKey` default empty string ആണ്. Empty ആണെങ്കിൽ gorilla/sessions encryption skip ചെയ്യും — development-ൽ OK, production-ൽ set ചെയ്യണം."
-
-> "`getEnvInt()` — string to int convert ചെയ്ത് return ചെയ്യുന്ന helper. RateLimit-ന് int value വേണം."
 
 ---
 
@@ -127,23 +120,13 @@ func (c *Config) IsProduction() bool {
 
 ---
 
-⌨️ **Continue typing — helper functions**:
+⌨️ **Continue typing — helper function**:
 
 ```go
 // getEnv retrieves env variable or returns fallback
 func getEnv(key, fallback string) string {
 	if val := os.Getenv(key); val != "" {
 		return val
-	}
-	return fallback
-}
-
-// getEnvInt retrieves env variable as int or returns fallback
-func getEnvInt(key string, fallback int) int {
-	if val := os.Getenv(key); val != "" {
-		if i, err := strconv.Atoi(val); err == nil {
-			return i
-		}
 	}
 	return fallback
 }
@@ -157,8 +140,6 @@ func getEnvInt(key string, fallback int) int {
 > "`os.Getenv(key)` — operating system-ന്റെ environment variable read ചെയ്യുന്നു. godotenv ഇവ set ചെയ്തിട്ടുണ്ടാകും."
 
 > "`if val := ...; val != \"\"` — Go-യുടെ short variable declaration with if. Variable declare ചെയ്ത് same line-ൽ check ചെയ്യാം. Concise, idiomatic Go."
-
-> "`getEnvInt` — similar, but string to int convert ചെയ്യുന്നു. `strconv.Atoi` — ASCII to Integer. Error ഉണ്ടെങ്കിൽ — invalid number — fallback return ചെയ്യും."
 
 ---
 
@@ -175,7 +156,6 @@ package config
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -188,7 +168,6 @@ type Config struct {
 	DatabasePath  string
 	SessionSecret string
 	SessionEncKey string
-	RateLimit     int
 }
 
 // Load reads configuration from environment variables
@@ -203,7 +182,6 @@ func Load() (*Config, error) {
 		DatabasePath:  getEnv("DATABASE_PATH", "./data/linkbio.db"),
 		SessionSecret: getEnv("SESSION_SECRET", "change-me-in-production"),
 		SessionEncKey: getEnv("SESSION_ENCRYPTION_KEY", ""),
-		RateLimit:     getEnvInt("RATE_LIMIT", 10),
 	}, nil
 }
 
@@ -224,20 +202,10 @@ func getEnv(key, fallback string) string {
 	}
 	return fallback
 }
-
-// getEnvInt retrieves env variable as int or returns fallback
-func getEnvInt(key string, fallback int) int {
-	if val := os.Getenv(key); val != "" {
-		if i, err := strconv.Atoi(val); err == nil {
-			return i
-		}
-	}
-	return fallback
-}
 ```
 
 📱 **Narration**:
-> "63 lines of code. Clean, simple, readable. ഓരോ function-നും ഒരു job — single responsibility. ഇത് production-ready code ആണ്."
+> "50 lines of code. Clean, simple, readable. ഓരോ function-നും ഒരു job — single responsibility. ഇത് production-ready code ആണ്."
 
 ---
 
@@ -405,7 +373,7 @@ Production (JSON):
 
 > "ഒന്ന് — Config struct. .env file read ചെയ്ത് type-safe struct-ൽ store ചെയ്യുന്നു. SessionSecret signing-ന്, SessionEncKey encryption-ന്."
 
-> "രണ്ട് — Helper functions. getEnv default values-ഓടെ, getEnvInt integer conversion-ഓടെ."
+> "രണ്ട് — Helper function. getEnv default values-ഓടെ."
 
 > "മൂന്ന് — Logger. Production-ൽ JSON, development-ൽ Text. slog — Go standard library."
 
@@ -425,3 +393,30 @@ Production (JSON):
 - **Output comparison**: The development vs production log output is a strong visual. Show both in split terminal or overlay.
 - **File save**: After finishing each file, press Ctrl+S visibly. Show the file in the VS Code explorer to confirm location.
 - **Common mistake**: Viewers might forget the `strings` import for `strings.ToUpper()`. The Go extension will auto-import, but mention it.
+
+---
+
+## 🎬 Part 1 Ending — CTA
+
+> 🔊 **Outro music fade in**
+
+📱 **Narration**:
+> "ഇവിടെ വരെ നമ്മൾ ചെയ്തത് — project structure, dependencies, config loading, structured logging."
+>
+> "Foundation ready ആണ്. Server start ചെയ്യാം, `/health` endpoint work ചെയ്യുന്നുണ്ട്."
+>
+> "Part 2-ൽ — database, authentication, handlers — actual business logic build ചെയ്യും."
+>
+> "Subscribe ചെയ്യൂ, bell icon press ചെയ്യൂ — Part 2 miss ആകരുത്!"
+>
+> "Code GitHub-ൽ ഉണ്ട് — link description-ൽ. അടുത്ത video-ൽ കാണാം!"
+
+> 🔊 **End screen**: Subscribe button + Part 2 preview card
+
+---
+
+## 📝 Part 1 Editing Notes
+
+- Add end screen with subscribe + next video link
+- Show GitHub repo URL on screen
+- Total Part 1 runtime target: ~40 minutes

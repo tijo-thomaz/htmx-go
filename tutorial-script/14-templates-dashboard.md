@@ -5,10 +5,13 @@
 
 ---
 
-## Analytics Stats Row
+## Analytics Stats Row (Auto-refresh via HTMX)
+
+> 📱 "Stats row-ൽ HTMX polling add ചെയ്യും. Every 10 seconds server-ൽ നിന്ന് fresh data fetch ചെയ്യും — page reload ഇല്ല!"
 
 ```html
-<div class="grid grid-cols-2 gap-4">
+<div id="stats-row" class="grid grid-cols-2 gap-4"
+     hx-get="/dashboard/stats" hx-trigger="every 10s" hx-swap="outerHTML">
     <!-- Total Views -->
     <div class="stat-card bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800">
         <p class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -26,8 +29,24 @@
 </div>
 ```
 
-> 🧠 📱 "{{if .Analytics}} — nil check. Analytics error ആയാൽ nil, template crash ആകില്ല."
-> 📱 "Click tracking work ചെയ്യുന്നുണ്ടെങ്കിൽ TotalClicks count കാണും. 0 ആയാൽ bugs check (Scene 9)."
+> 🧠 📱 "`hx-get=\"/dashboard/stats\"` — HTMX every 10 seconds GET request send ചെയ്യും."
+> 📱 "`hx-trigger=\"every 10s\"` — polling interval. Server stats partial HTML return ചെയ്യും."
+> 📱 "`hx-swap=\"outerHTML\"` — entire stats-row replace ചെയ്യും fresh data-ഓടെ."
+> 📱 "{{if .Analytics}} — nil check. Analytics error ആയാൽ nil, template crash ആകില്ല."
+> 📱 "ഇതിന്റെ backend — `Stats()` handler `stats.html` partial render ചെയ്ത് return ചെയ്യും (Scene 10)."
+
+> 🎯 📱 "HTMX polling — WebSocket complexity ഇല്ലാതെ near real-time updates. Profile visit ചെയ്താൽ dashboard-ൽ 10 seconds-ൽ count update ആകും!"
+
+---
+
+## Stats Partial Template
+
+> 📱 "Stats row auto-refresh-ന് ഒരു partial template വേണം. Server ഈ HTML fragment return ചെയ്യും."
+
+**⌨️ Create `web/templates/partials/stats.html`:**
+Same HTML as the stats row above, but standalone. Server Stats() handler ഈ file render ചെയ്ത് return ചെയ്യും.
+
+> 🧠 📱 "Partial template = reusable HTML fragment. Full page template-ൽ inline ആയും, HTMX polling response ആയും same HTML use ചെയ്യാം. DRY principle!"
 
 ---
 

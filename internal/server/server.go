@@ -42,7 +42,7 @@ func New(cfg *config.Config, log *slog.Logger) (*Server, error) {
 	resp := response.New(log)
 
 	// Initialize middleware
-	mw := middleware.New(log, cfg.SessionSecret, cfg.SessionEncKey, cfg.RateLimit)
+	mw := middleware.New(log, cfg.SessionSecret, cfg.SessionEncKey)
 
 	// Initialize handlers
 	h := handler.New(&handler.Dependencies{

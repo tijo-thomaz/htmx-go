@@ -10,6 +10,7 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
 
 	"linkbio/internal/middleware"
@@ -78,12 +79,41 @@ func (h *DashboardHandler) Index(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
+
+// Stats returns the stats partial HTML for HTMX polling
+func (h *DashboardHandler) Stats(w http.ResponseWriter, r *http.Request) {
+	userID := middleware.UserIDFromContext(r.Context())
+
+	analytics, err := h.analyticsRepo.GetSummary(r.Context(), userID, 28)
+	if err != nil {
+		h.log.Error("analytics error", "error", err)
+		analytics = nil
+	}
+
+	tmpl, err := template.ParseFiles("web/templates/partials/stats.html")
+	if err != nil {
+		h.log.Error("template error", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := tmpl.Execute(w, analytics); err != nil {
+		h.log.Error("template error", "error", err)
+	}
+}
 ```
+
+> ⚠️ **Note:** Import `"html/template"` also needed at the top for the Stats handler.
 
 > 🧠 **Explain:**
 > 📱 "GetSummary(ctx, userID, 28) — last 28 days analytics. TotalViews, TotalClicks, per-link breakdown."
 > 📱 "Analytics error ആയാൽ nil set ചെയ്യും. Dashboard render ചെയ്യും — analytics optional."
 > 📱 "Template-ൽ `{{if .Analytics}}` check ചെയ്യും. nil ആയാൽ 0 show."
+
+> 🧠 **Explain Stats handler:**
+> 📱 "Stats() — HTMX polling endpoint. Dashboard-ൽ stats cards every 10 seconds auto-refresh ആകും."
+> 📱 "stats.html partial template render ചെയ്ത് return ചെയ്യുന്നു — full page reload വേണ്ട."
+> 📱 "Profile visit ചെയ്യുമ്പോഴോ link click ചെയ്യുമ്പോഴോ dashboard-ൽ real-time ആയി count update ആകും."
 
 > 🎯 📱 "ഇവിടെ click tracking work ചെയ്യുന്നുണ്ടെങ്കിൽ TotalClicks > 0 കാണും. 0 ആണെങ്കിൽ Scene 9-ൽ discuss ചെയ്ത bugs check ചെയ്യൂ!"
 

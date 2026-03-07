@@ -1,0 +1,31 @@
+<div id="stats-row" class="grid grid-cols-2 gap-4"
+     hx-get="/dashboard/stats" hx-trigger="every 10s" hx-swap="outerHTML">
+    <div class="stat-card bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{if .}}{{.TotalViews}}{{else}}0{{end}}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Total Views</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{if .}}{{.TotalClicks}}{{else}}0{{end}}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Total Clicks</p>
+            </div>
+        </div>
+    </div>
+</div>

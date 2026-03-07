@@ -5,18 +5,16 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
-	"golang.org/x/time/rate"
 )
 
 // Middleware holds dependencies for all middleware functions
 type Middleware struct {
 	log     *slog.Logger
 	store   *sessions.CookieStore
-	limiter *rate.Limiter
 }
 
 // New creates a new Middleware instance
-func New(log *slog.Logger, sessionSecret, encryptionKey string, rateLimit int) *Middleware {
+func New(log *slog.Logger, sessionSecret, encryptionKey string) *Middleware {
 	var store *sessions.CookieStore
 	if len(encryptionKey) == 32 {
 		store = sessions.NewCookieStore([]byte(sessionSecret), []byte(encryptionKey))
@@ -33,13 +31,9 @@ func New(log *slog.Logger, sessionSecret, encryptionKey string, rateLimit int) *
 		SameSite: http.SameSiteLaxMode,
 	}
 
-	// Create rate limiter: rateLimit requests per second, burst of rateLimit*2
-	limiter := rate.NewLimiter(rate.Limit(rateLimit), rateLimit*2)
-
 	return &Middleware{
-		log:     log,
-		store:   store,
-		limiter: limiter,
+		log:   log,
+		store: store,
 	}
 }
 

@@ -2,7 +2,6 @@ package config
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -15,7 +14,6 @@ type Config struct {
 	DatabasePath  string
 	SessionSecret    string
 	SessionEncKey    string
-	RateLimit        int
 }
 
 // Load reads configuration from environment variables
@@ -30,7 +28,6 @@ func Load() (*Config, error) {
 		DatabasePath:  getEnv("DATABASE_PATH", "./data/linkbio.db"),
 		SessionSecret:    getEnv("SESSION_SECRET", "change-me-in-production"),
 		SessionEncKey:    getEnv("SESSION_ENCRYPTION_KEY", ""),
-		RateLimit:        getEnvInt("RATE_LIMIT", 10),
 	}, nil
 }
 
@@ -52,12 +49,3 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-// getEnvInt retrieves env variable as int or returns fallback
-func getEnvInt(key string, fallback int) int {
-	if val := os.Getenv(key); val != "" {
-		if i, err := strconv.Atoi(val); err == nil {
-			return i
-		}
-	}
-	return fallback
-}

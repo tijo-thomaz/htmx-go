@@ -46,8 +46,8 @@
 │  │          │  │            │  │          │  │          │  │
 │  │ chi      │  │ • Auth     │  │ • Logic  │  │ • HTML   │  │
 │  │ matches  │  │ • Logging  │  │ • DB     │  │ • Render │  │
-│  │ URL path │  │ • Rate     │  │   calls  │  │ • Data   │  │
-│  │          │  │   limit    │  │          │  │          │  │
+│  │ URL path │  │            │  │   calls  │  │ • Data   │  │
+│  │          │  │            │  │          │  │          │  │
 │  └──────────┘  └────────────┘  └──────────┘  └──────────┘  │
 └─────────────────────────┬───────────────────────────────────┘
                           │
@@ -92,7 +92,13 @@
 > "Alpine.js ഒരു Swiss Army knife പോലെ. ചെറുതാണ്, പക്ഷേ ആവശ്യമുള്ളത് എല്ലാം ഉണ്ട്. React ഒരു full toolbox ആണ് — powerful, but overkill for our needs."
 
 📱 **GSAP**:
-> "GSAP — animations. Page load ചെയ്യുമ്പോൾ elements fade-in ആകുന്നത്, stagger effects — ഇതെല്ലാം GSAP."
+> "GSAP — GreenSock Animation Platform. CSS animations-നേക്കാൾ powerful."
+> "Page load ചെയ്യുമ്പോൾ navbar slide-in, link cards stagger ചെയ്ത് appear — smooth, professional feel."
+> "Button hover-ൽ scale effect, link cards-ൽ subtle slide — ഇതൊക്കെ GSAP."
+> "CSS animations-ൽ stagger, timeline, easing control ചെയ്യാൻ complicated ആണ്. GSAP-ൽ one line."
+
+📱 **AOS**:
+> "AOS — Animate On Scroll. Scroll ചെയ്യുമ്പോൾ elements fade-up, fade-in ചെയ്യും. Landing page features section-ൽ use ചെയ്യും."
 
 📱 **HTMX**:
 > "HTMX — ഇത് നമ്മുടെ star player. Server-ലേക്ക് requests അയക്കുന്നത് ഇതാണ്."
@@ -144,7 +150,7 @@ HTMX approach:
 > "Router ഒരു building-ലെ receptionist പോലെ. നിങ്ങൾ വരുമ്പോൾ ചോദിക്കും — 'എവിടെ പോകണം?' — ശരിയായ room-ലേക്ക് direct ചെയ്യും."
 
 📱 **Middleware**:
-> "Middleware — request handler-ൽ reach ആകുന്നതിന് മുമ്പ് check ചെയ്യുന്ന code. Authentication, logging, rate limiting."
+> "Middleware — request handler-ൽ reach ആകുന്നതിന് മുമ്പ് check ചെയ്യുന്ന code. Authentication, logging."
 
 🎯 **Analogy**:
 > "Middleware ഒരു security guard പോലെ. Building-ൽ enter ചെയ്യുന്നതിന് മുമ്പ് ID check ചെയ്യും. Valid അല്ലെങ്കിൽ — 'Sorry, you can't enter.' Valid ആണെങ്കിൽ — 'Go ahead.'"
@@ -203,7 +209,7 @@ HTMX: POST /links {title: "YouTube", url: "https://youtube.com"}
     ↓
 Router: POST /links → LinkHandler.Create
     ↓
-Middleware: Auth check ✅ → Logging ✅ → Rate limit ✅
+Middleware: Auth check ✅ → Logging ✅
     ↓
 Handler: Validate → Save to SQLite → Render template
     ↓

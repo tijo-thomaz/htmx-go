@@ -23,7 +23,6 @@ export ENV=production
 export SESSION_SECRET=$(openssl rand -hex 32)
 export SESSION_ENCRYPTION_KEY=$(openssl rand -hex 16)
 export DATABASE_PATH=/data/linkbio.db
-export RATE_LIMIT=50
 ```
 
 > 🧠 📱 "openssl rand -hex 32 — random 64-char hex string. Signing key."
@@ -41,7 +40,6 @@ export RATE_LIMIT=50
 | `SESSION_SECRET` | any string | random, 32+ chars |
 | `SESSION_ENCRYPTION_KEY` | any 32-char | random, exactly 32 chars |
 | `LOG_LEVEL` | DEBUG | INFO or WARN |
-| `RATE_LIMIT` | 100 | 50 (adjust per need) |
 
 > 📱 "Secure: true — production-ൽ middleware.go-ൽ change ചെയ്യണം. HTTPS ഇല്ലാതെ cookie send ചെയ്യില്ല."
 
