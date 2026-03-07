@@ -82,7 +82,9 @@ func Migrate(db *sql.DB, log *slog.Logger) error {
 			FOREIGN KEY (link_id) REFERENCES links(id) ON DELETE CASCADE
 		)`,
 		`CREATE INDEX IF NOT EXISTS idx_links_user_id ON links(user_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_links_position ON links(user_id, position)`,
 		`CREATE INDEX IF NOT EXISTS idx_analytics_user_id ON analytics(user_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics(created_at)`,
 	}
 
 	for i, migration := range migrations {
@@ -185,9 +187,9 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 func (r *UserRepository) Create(ctx context.Context, user *model.User) error {
-	query := `INSERT INTO users (username, email, password_hash, display_name, theme) VALUES (?, ?, ?, ?, ?)`
+	query := `INSERT INTO users (username, email, password_hash, display_name, bio, avatar_url, theme) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	result, err := r.db.ExecContext(ctx, query,
-		user.Username, user.Email, user.PasswordHash, user.DisplayName, user.Theme,
+		user.Username, user.Email, user.PasswordHash, user.DisplayName, user.Bio, user.AvatarURL, user.Theme,
 	)
 	if err != nil {
 		return err

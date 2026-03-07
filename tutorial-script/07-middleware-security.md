@@ -25,16 +25,14 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
-	"golang.org/x/time/rate"
 )
 
 type Middleware struct {
 	log     *slog.Logger
 	store   *sessions.CookieStore
-	limiter *rate.Limiter
 }
 
-func New(log *slog.Logger, sessionSecret, encryptionKey string, rateLimit int) *Middleware {
+func New(log *slog.Logger, sessionSecret, encryptionKey string) *Middleware {
 	var store *sessions.CookieStore
 	if len(encryptionKey) == 32 {
 		store = sessions.NewCookieStore([]byte(sessionSecret), []byte(encryptionKey))
@@ -51,12 +49,9 @@ func New(log *slog.Logger, sessionSecret, encryptionKey string, rateLimit int) *
 		SameSite: http.SameSiteLaxMode,
 	}
 
-	limiter := rate.NewLimiter(rate.Limit(rateLimit), rateLimit*2)
-
 	return &Middleware{
 		log:     log,
 		store:   store,
-		limiter: limiter,
 	}
 }
 
@@ -99,24 +94,26 @@ import (
 
 type responseWriter struct {
 	http.ResponseWriter
-	statusCode int
+	status int
 }
 
 func (rw *responseWriter) WriteHeader(code int) {
-	rw.statusCode = code
+	rw.status = code
 	rw.ResponseWriter.WriteHeader(code)
 }
 
 func (m *Middleware) Logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		wrapped := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+		wrapped := &responseWriter{ResponseWriter: w, status: http.StatusOK}
 		next.ServeHTTP(wrapped, r)
 		m.log.Info("request",
 			"method", r.Method,
 			"path", r.URL.Path,
-			"status", wrapped.statusCode,
+			"status", wrapped.status,
 			"duration", time.Since(start).String(),
+			"ip", r.RemoteAddr,
+			"user_agent", r.UserAgent(),
 		)
 	})
 }
@@ -158,29 +155,6 @@ func (m *Middleware) Recovery(next http.Handler) http.Handler {
 
 ---
 
-## Rate Limit Middleware
-
-**⌨️ Create `internal/middleware/ratelimit.go`:**
-```go
-package middleware
-
-import "net/http"
-
-func (m *Middleware) RateLimit(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !m.limiter.Allow() {
-			http.Error(w, "Too Many Requests", http.StatusTooManyRequests)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-```
-
-> 🧠 📱 "Token bucket algorithm. Bucket-ൽ tokens ഉണ്ട്. ഓരോ request-നും ഒരു token use ചെയ്യും. Tokens തീർന്നാൽ 429 Too Many Requests."
-
----
-
 ## Auth Middleware
 
 **⌨️ Create `internal/middleware/auth.go`:**
@@ -195,19 +169,24 @@ import (
 type contextKey string
 
 const (
-	userIDKey   contextKey = "user_id"
-	usernameKey contextKey = "username"
+	UserIDKey   contextKey = "user_id"
+	UsernameKey contextKey = "username"
 )
 
 func (m *Middleware) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := m.store.Get(r, "session")
+		session, err := m.store.Get(r, "session")
+		if err != nil {
+			m.log.Error("session error", "error", err)
+			http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+			return
+		}
 
 		userID, ok := session.Values["user_id"].(int64)
 		if !ok || userID == 0 {
 			if r.Header.Get("HX-Request") == "true" {
 				w.Header().Set("HX-Redirect", "/auth/login")
-				w.WriteHeader(http.StatusOK)
+				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
 			http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
@@ -216,21 +195,21 @@ func (m *Middleware) Auth(next http.Handler) http.Handler {
 
 		username, _ := session.Values["username"].(string)
 
-		ctx := context.WithValue(r.Context(), userIDKey, userID)
-		ctx = context.WithValue(ctx, usernameKey, username)
+		ctx := context.WithValue(r.Context(), UserIDKey, userID)
+		ctx = context.WithValue(ctx, UsernameKey, username)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func UserIDFromContext(ctx context.Context) int64 {
-	if id, ok := ctx.Value(userIDKey).(int64); ok {
+	if id, ok := ctx.Value(UserIDKey).(int64); ok {
 		return id
 	}
 	return 0
 }
 
 func UsernameFromContext(ctx context.Context) string {
-	if name, ok := ctx.Value(usernameKey).(string); ok {
+	if name, ok := ctx.Value(UsernameKey).(string); ok {
 		return name
 	}
 	return ""

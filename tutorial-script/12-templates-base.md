@@ -1,3 +1,16 @@
+# 🎬 PART 3 — Frontend & Polish
+
+> 📱 **Part 3 Intro** (show on screen before Scene 12):
+> "Part 2-ൽ backend complete ചെയ്തു — working API, auth, database, everything."
+>
+> "ഇന്ന് frontend — templates, HTMX magic, Alpine.js, dark mode, drag-drop."
+>
+> "App beautiful ആക്കാം! Let's go!"
+
+> 🔊 **Intro music** (3 seconds)
+
+---
+
 # Scene 12: Base Layout Template (48:00 - 50:00)
 
 > 🎬 **Previous**: Router + server wired (Scene 11)
@@ -43,17 +56,22 @@
 {{end}}
 ```
 
+> 🧠 **Key point — One base layout, all libs loaded once:**
+> 📱 "ഇവിടെ ഒരു important pattern. എല്ലാ libraries ഒരു file-ൽ — base.html. Login page, dashboard, profile — ഏത് page render ചെയ്താലും base layout extend ചെയ്യും. Libraries ഒന്ന് load ചെയ്താൽ മതി."
+> 📱 "React-ൽ ഓരോ component-ൽ import ചെയ്യണം. ഇവിടെ base layout handle ചെയ്യും — DRY principle."
+
 > 🧠 **Explain each library:**
-> 📱 "HTMX — server-sent HTML swap. JavaScript ഇല്ലാതെ dynamic pages."
-> 📱 "Alpine.js — lightweight reactivity. Toggle, forms, clipboard. defer load."
-> 📱 "Tailwind — utility-first CSS. Class-ൽ design."
-> 📱 "AOS — Animate On Scroll. Elements scroll ചെയ്യുമ്പോൾ fade-in."
-> 📱 "GSAP — smooth animations. Link cards stagger."
+> 📱 "Tailwind CSS — CDN script tag. Utility-first CSS. `class='text-white bg-blue-500'` — CSS files എഴുതണ്ട."
+> 📱 "HTMX — `hx-post`, `hx-get`, `hx-swap` — HTML attributes ആയി server requests. JavaScript write ചെയ്യണ്ട."
+> 📱 "Alpine.js — `defer` attribute ഉണ്ട്. DOM ready ആയ ശേഷം load. `x-data`, `x-show`, `@click` — minimal JS for interactivity."
+> 📱 "AOS — scroll animations. `data-aos='fade-up'` HTML attribute add ചെയ്താൽ മതി."
+> 📱 "GSAP — professional animations. Stagger, timeline, easing. app.js-ൽ initialize ചെയ്യും — navbar slide-in, link cards appear."
 
 > 🧠 **Explain template blocks:**
-> 📱 "{{block \"title\" .}} — child templates override ചെയ്യാം."
-> 📱 "x-data on html tag — darkMode state global. localStorage-ൽ persist."
-> 📱 ":class dark — Tailwind dark mode CSS activate."
+> 📱 "{{block \"title\" .}} — child templates override ചെയ്യാം. Login page 'Sign In - LinkBio', dashboard 'Dashboard - LinkBio'."
+> 📱 "{{block \"head\" .}} — page-specific CSS/JS inject ചെയ്യാൻ. Dashboard-ൽ SortableJS add ചെയ്യും."
+> 📱 "x-data on html tag — darkMode state global. localStorage-ൽ persist. Page reload ചെയ്താലും dark mode remember."
+> 📱 ":class dark — Tailwind dark mode activate. `dark:bg-gray-900`, `dark:text-white` — conditional styles."
 
 ---
 
@@ -193,6 +211,8 @@
     color: #fca5a5;
 }
 ```
+
+> ⚠️ **Note:** Script-ൽ ~50 lines മാത്രം show ചെയ്യുന്നു. Full `app.css` file ~290 lines ഉണ്ട് — dark mode variants, responsive styles, ambient orb animations, form styles, etc. Full file GitHub repo-ൽ available ആണ്. Description-ൽ link ഉണ്ട്.
 
 > 🧠 **Explain key CSS concepts:**
 > 📱 "CSS variables — consistent theming. Colors, gradients, shadows ഒരു place-ൽ define."

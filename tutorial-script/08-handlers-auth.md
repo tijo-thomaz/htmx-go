@@ -50,8 +50,8 @@ func (r *Responder) HXRedirect(w http.ResponseWriter, url string) {
 }
 ```
 
-> 🧠 📱 "HXRedirect — HTMX forms-ന് redirect ചെയ്യാൻ. Normal HTTP redirect HTMX ignore ചെയ്യും. HX-Redirect header set ചെയ്താൽ HTMX client-side redirect ചെയ്യും."
-> 📱 "JSON() — API response-ന്. Content-Type set ചെയ്ത് JSON encode ചെയ്യും."
+> 🧠 📱 "Error() — simple. Status code set, message write. app.js-ൽ htmx:beforeSwap handler error HTML wrap ചെയ്യും."
+> 📱 "HXRedirect — HTMX forms-ന് redirect ചെയ്യാൻ. Normal HTTP redirect HTMX ignore ചെയ്യും. HX-Redirect header set ചെയ്താൽ HTMX client-side redirect ചെയ്യും."
 
 ---
 
@@ -150,19 +150,22 @@ func New(deps *Dependencies) *Handler {
 package handler
 
 import (
-	"encoding/json"
+	"log/slog"
 	"net/http"
 )
 
-type HealthHandler struct{}
+type HealthHandler struct {
+	log *slog.Logger
+}
 
-func NewHealthHandler(deps *Dependencies) *HealthHandler {
-	return &HealthHandler{}
+func NewHealthHandler(log *slog.Logger) *HealthHandler {
+	return &HealthHandler{log: log}
 }
 
 func (h *HealthHandler) Check(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"status":"ok"}`))
 }
 ```
 
@@ -247,9 +250,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	session, _ := h.store.Get(r, "session")
 	session.Values["user_id"] = user.ID
 	session.Values["username"] = user.Username
-	session.Save(r, w)
+	if err := session.Save(r, w); err != nil {
+		h.log.Error("session save error", "error", err)
+		h.resp.Error(w, http.StatusInternalServerError, "Something went wrong")
+		return
+	}
 
-	h.log.Info("user logged in", "user_id", user.ID)
+	h.log.Info("user logged in", "user_id", user.ID, "username", user.Username)
 	h.resp.HXRedirect(w, "/dashboard")
 }
 
@@ -315,7 +322,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	session.Values["username"] = user.Username
 	session.Save(r, w)
 
-	h.log.Info("user registered", "user_id", user.ID)
+	h.log.Info("user registered", "user_id", user.ID, "username", user.Username)
 	h.resp.HXRedirect(w, "/dashboard")
 }
 

@@ -8,9 +8,11 @@
 ## 8:00 — Create Project
 
 📱 **Narration**:
+
 > "ആദ്യം നമ്മൾ project folder create ചെയ്യാം."
 
 ⌨️ **Type this**:
+
 ```bash
 mkdir linkbio
 cd linkbio
@@ -18,6 +20,7 @@ go mod init linkbio
 ```
 
 🧠 **Explain**:
+
 > "go mod init — ഇത് നമ്മുടെ project-ന്റെ ID card പോലെ. Go modules — dependency management system. npm init പോലെ, പക്ഷേ Go-യ്ക്ക്."
 
 ---
@@ -25,9 +28,11 @@ go mod init linkbio
 ## 8:30 — Folder Structure
 
 📱 **Narration**:
+
 > "Industry-standard folder structure create ചെയ്യാം. ഇത് random folders അല്ല — Google, Uber, Stripe — large companies use ചെയ്യുന്ന pattern ആണ്."
 
 ⌨️ **Type this** (one by one, explain as you go):
+
 ```bash
 mkdir -p cmd/server
 mkdir -p internal/config
@@ -37,7 +42,6 @@ mkdir -p internal/handler
 mkdir -p internal/middleware
 mkdir -p internal/model
 mkdir -p internal/repository
-mkdir -p internal/service
 mkdir -p internal/pkg/logger
 mkdir -p internal/pkg/response
 mkdir -p internal/pkg/templates
@@ -62,9 +66,11 @@ mkdir -p migrations
 ⚠️ **Important — Why `internal/` is special**:
 
 📱 **Narration**:
+
 > "ഇത് ഒരു important Go rule ആണ്. `internal/` folder-ൽ ഉള്ള code — config, handler, model — ഇവ നമ്മുടെ project-ന് മാത്രം available ആണ്. മറ്റൊരു project `import linkbio/internal/config` ചെയ്താൽ Go compiler error throw ചെയ്യും."
 
 🎯 **Analogy**:
+
 > "internal/ ഒരു company-ന്റെ internal documents പോലെ. Employees access ചെയ്യാം, പക്ഷേ outside-ൽ ഉള്ള ആൾക്ക് access ഇല്ല. Go compiler ആ security guard ആണ്."
 
 📱 **Continue explaining folders**:
@@ -77,13 +83,11 @@ mkdir -p migrations
 
 > "`internal/handler/` — Request handling logic. ഓരോ feature-നും ഒരു handler file."
 
-> "`internal/middleware/` — Auth check, logging, rate limiting — requests filter ചെയ്യുന്ന code."
+> "`internal/middleware/` — Auth check, logging — requests filter ചെയ്യുന്ന code."
 
 > "`internal/model/` — Data structures. User, Link, Analytics — Go structs."
 
 > "`internal/repository/` — Database queries. SQL ഇവിടെ മാത്രം."
-
-> "`internal/service/` — Business logic. Handler-ഉം repository-യും connect ചെയ്യുന്ന layer."
 
 > "`internal/pkg/` — Shared utilities. Logger, response helpers, template engine."
 
@@ -98,6 +102,7 @@ mkdir -p migrations
 > "`migrations/` — Database migration files. Future use."
 
 🎯 **Analogy**:
+
 > "ഈ folder structure ഒരു well-organized kitchen പോലെ. Spices ഒരിടത്ത്, utensils മറ്റൊരിടത്ത്, ingredients വേറൊരിടത്ത്. ആരെങ്കിലും kitchen-ൽ വന്നാൽ എല്ലാം find ചെയ്യാൻ easy. Code-ഉം same — organized ആയാൽ 6 months കഴിഞ്ഞ് വന്നാലും understand ചെയ്യാം."
 
 ---
@@ -105,59 +110,63 @@ mkdir -p migrations
 ## 10:00 — Install Dependencies
 
 📱 **Narration**:
+
 > "നമുക്ക് ആവശ്യമായ packages install ചെയ്യാം. ഓരോന്നും explain ചെയ്യാം."
 
 ⌨️ **Type and explain each**:
 
 ### 1. Chi Router
+
 ```bash
 go get github.com/go-chi/chi/v5
 ```
 
 🧠 **Explain**:
+
 > "chi — lightweight HTTP router. Express.js പോലെ, പക്ഷേ Go-യ്ക്ക്. Standard library-യുടെ net/http compatible ആണ്. Middleware chaining, URL parameters — എല്ലാം support ചെയ്യും."
 
 ### 2. Gorilla Sessions
+
 ```bash
 go get github.com/gorilla/sessions
 ```
 
 🧠 **Explain**:
+
 > "gorilla/sessions — login sessions manage ചെയ്യാൻ. User login ചെയ്യുമ്പോൾ ഒരു session cookie create ചെയ്യും. Next request-ൽ ആ cookie check ചെയ്ത് user-നെ identify ചെയ്യും."
 
 ### 3. SQLite Driver
+
 ```bash
 go get modernc.org/sqlite
 ```
 
 🧠 **Explain**:
+
 > "modernc/sqlite — Pure Go SQLite driver. CGo വേണ്ട, C compiler install ചെയ്യണ്ട. Cross-platform — Windows, Mac, Linux — എല്ലായിടത്തും work ചെയ്യും."
 
-⚠️ **Note**: 
+⚠️ **Note**:
+
 > "ആദ്യ download time കൂടുതൽ ആകാം. Pure Go-ൽ SQLite compile ചെയ്യുന്നു. Patience!"
 
 ### 4. Crypto (bcrypt)
+
 ```bash
 go get golang.org/x/crypto
 ```
 
 🧠 **Explain**:
+
 > "x/crypto — Go team maintain ചെയ്യുന്ന cryptography package. നമ്മൾ bcrypt use ചെയ്യും — password hashing-ന്. Plain text passwords database-ൽ store ചെയ്യരുത് — ⚠️ security disaster!"
 
-### 5. Rate Limiter
-```bash
-go get golang.org/x/time
-```
+### 5. Dotenv
 
-🧠 **Explain**:
-> "x/time — rate limiting-ന്. ഒരു IP address-ൽ നിന്ന് per minute 10 requests only. Brute-force attacks prevent ചെയ്യാൻ."
-
-### 6. Dotenv
 ```bash
 go get github.com/joho/godotenv
 ```
 
 🧠 **Explain**:
+
 > "godotenv — `.env` file read ചെയ്ത് environment variables ആയി load ചെയ്യുന്നു. Development-ൽ convenient. Production-ൽ real environment variables use ചെയ്യും."
 
 ---
@@ -165,9 +174,11 @@ go get github.com/joho/godotenv
 ## 12:00 — Create .env File
 
 📱 **Narration**:
+
 > "Configuration file create ചെയ്യാം. Secrets-ഉം settings-ഉം ഇവിടെ store ചെയ്യും. ഈ file git-ൽ commit ചെയ്യരുത്!"
 
 ⌨️ **Create `.env`**:
+
 ```env
 # Server Configuration
 PORT=8080
@@ -182,9 +193,6 @@ DATABASE_PATH=./data/linkbio.db
 # Session
 SESSION_SECRET=your-super-secret-key-change-in-production
 SESSION_ENCRYPTION_KEY=must-be-exactly-32-bytes-long!!
-
-# Rate Limiting
-RATE_LIMIT=10
 ```
 
 🧠 **Explain each variable**:
@@ -201,8 +209,6 @@ RATE_LIMIT=10
 
 > "`SESSION_ENCRYPTION_KEY` — ⚠️ ഇത് session data encrypt ചെയ്യാൻ. Exactly 32 bytes ആയിരിക്കണം."
 
-> "`RATE_LIMIT` — per-IP requests per second."
-
 ---
 
 ## 12:30 — SESSION_SECRET vs SESSION_ENCRYPTION_KEY
@@ -212,11 +218,13 @@ RATE_LIMIT=10
 🎥 **Camera**: Slow down here. Use a visual or draw on screen.
 
 📱 **Narration**:
+
 > "ഇവിടെ ഒരു common confusion ഉണ്ട്. SESSION_SECRET-ഉം SESSION_ENCRYPTION_KEY-ഉം — രണ്ടും different ആണ്. ഇത് understand ചെയ്യണം."
 
 🎯 **Analogy — Seal vs Locked Box**:
 
 📱 **Narration**:
+
 > "ഒരു letter അയക്കുന്നു എന്ന് imagine ചെയ്യൂ."
 
 > "SESSION_SECRET — ഇത് ഒരു **wax seal** പോലെ. Letter-ന്റെ outside-ൽ ഒരു seal — ആരെങ്കിലും open ചെയ്തോ എന്ന് detect ചെയ്യാം. ആരെങ്കിലും letter modify ചെയ്താൽ seal break ആകും. **Tampering detect ചെയ്യുന്നു, content hide ചെയ്യുന്നില്ല**. Letter read ചെയ്യാൻ ആർക്കും കഴിയും!"
@@ -226,6 +234,7 @@ RATE_LIMIT=10
 > "രണ്ടും combine ചെയ്യുമ്പോൾ — letter ഒരു locked box-ൽ ഇട്ടു, box-ന് ഒരു seal ഇട്ടു. ആർക്കും read ചെയ്യാൻ പറ്റില്ല, modify ചെയ്യാനും പറ്റില്ല. **Double protection!**"
 
 🎥 **Show diagram**:
+
 ```
 SESSION_SECRET (Signing — HMAC):
 ┌──────────────────┐
@@ -250,6 +259,7 @@ Both together:
 ⚠️ **Security rules**:
 
 📱 **Narration**:
+
 > "SESSION_SECRET — minimum 32 characters. Random generate ചെയ്യണം. `openssl rand -base64 32` terminal-ൽ run ചെയ്താൽ ഒരു random key കിട്ടും."
 
 > "SESSION_ENCRYPTION_KEY — **exactly 32 bytes** ആയിരിക്കണം. AES-256 encryption-ന്. 16, 24, അല്ലെങ്കിൽ 32 bytes valid ആണ്, പക്ഷേ 32 strongest."
@@ -261,9 +271,11 @@ Both together:
 ## 14:00 — Create .env.example
 
 📱 **Narration**:
+
 > ".env git-ൽ commit ചെയ്യില്ല. But other developers-ന് ഏത് variables വേണം എന്ന് അറിയണം. അതിന് .env.example create ചെയ്യാം."
 
 ⌨️ **Create `.env.example`**:
+
 ```env
 # Server Configuration
 PORT=8080
@@ -278,12 +290,10 @@ DATABASE_PATH=./data/linkbio.db
 # Session
 SESSION_SECRET=your-super-secret-key-change-in-production
 SESSION_ENCRYPTION_KEY=must-be-exactly-32-bytes-long!!
-
-# Rate Limiting
-RATE_LIMIT=10
 ```
 
 🧠 **Explain**:
+
 > "ഈ file git-ൽ commit ചെയ്യും. New developer clone ചെയ്യുമ്പോൾ `.env.example` copy ചെയ്ത് `.env` ആക്കിയാൽ മതി. Real secrets ഇതിൽ ഇല്ല."
 
 ---
@@ -291,9 +301,11 @@ RATE_LIMIT=10
 ## 14:15 — Create .gitignore
 
 📱 **Narration**:
+
 > "Git-ൽ commit ചെയ്യരുത്ത files specify ചെയ്യാം."
 
 ⌨️ **Create `.gitignore`**:
+
 ```gitignore
 # Binaries
 bin/
@@ -336,6 +348,7 @@ tmp/
 ```
 
 🧠 **Explain key entries**:
+
 > "`.env` — secrets git-ൽ commit ചെയ്യരുത്. ⚠️ ഇത് forget ചെയ്താൽ secrets public ആകും!"
 
 > "`data/*.db` — database file. Each developer-ന് own data ഉണ്ടാകും."
@@ -347,9 +360,11 @@ tmp/
 ## 14:30 — Create Makefile
 
 📱 **Narration**:
+
 > "Development workflow easy ആക്കാൻ ഒരു Makefile create ചെയ്യാം. ഇത് required അല്ല — just a convenience tool. Long commands remember ചെയ്യണ്ട."
 
 ⌨️ **Create `Makefile`**:
+
 ```makefile
 .PHONY: run build test clean dev tidy
 
@@ -395,6 +410,7 @@ env:
 > "`.PHONY` — Make-നോട് പറയുന്നു ഇവ files അല്ല, commands ആണ്. `run` എന്ന folder ഉണ്ടെങ്കിലും `make run` command execute ചെയ്യും."
 
 📱 **Narration**:
+
 > "Makefile ഒരു convenience tool ആണ്. ഇത് ഇല്ലാതെയും project run ചെയ്യാം — direct go commands use ചെയ്താൽ മതി. But team projects-ൽ Makefile ഉണ്ടെങ്കിൽ everyone same commands use ചെയ്യും."
 
 ---
@@ -402,19 +418,23 @@ env:
 ## 14:45 — Verify Setup
 
 📱 **Narration**:
+
 > "ഇനി verify ചെയ്യാം — everything correct ആണോ."
 
 ⌨️ **Type this**:
+
 ```bash
 go mod tidy
 ```
 
 🧠 **Explain**:
+
 > "go mod tidy — unnecessary dependencies remove ചെയ്യും, missing dependencies add ചെയ്യും. go.sum file update ചെയ്യും."
 
 🎥 **Camera**: Show `go.mod` file in VS Code. Point out the module name and dependencies.
 
 📱 **Narration**:
+
 > "go.mod നോക്കൂ. Module name `linkbio`, Go version, എല്ലാ dependencies list ചെയ്തിട്ടുണ്ട്. Package.json പോലെ."
 
 ---
@@ -422,6 +442,7 @@ go mod tidy
 ## 14:55 — Transition
 
 📱 **Narration**:
+
 > "Project setup complete. Folders ready, dependencies installed, secrets configured. ഇനി actual code എഴുതാൻ തുടങ്ങാം — config loading-ൽ നിന്ന്!"
 
 🔊 **Transition sound**

@@ -75,6 +75,43 @@
 
 ---
 
+## Profile Page Inline Scripts — AOS + GSAP
+
+> 📱 "Profile page-ന് own AOS init-ഉം GSAP stagger animation-ഉം ഉണ്ട്. Base layout-ലെ `{{block "scripts"}}` block override ചെയ്ത് page-specific animations add ചെയ്യും."
+
+```html
+{{define "scripts"}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                duration: 600,
+                easing: 'ease-out-cubic',
+                once: true,
+                offset: 20
+            });
+        }
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.from('.link-button', {
+                y: 20,
+                stagger: 0.08,
+                duration: 0.5,
+                ease: 'power3.out',
+                delay: 0.2
+            });
+        }
+    });
+</script>
+{{end}}
+```
+
+> 🧠 📱 "AOS.init() — profile page-ന് separate init. offset: 20 — app.js-ലെ 50 അല്ല. Profile mobile-first, shorter scroll distances."
+> 📱 "GSAP stagger — link buttons one-by-one appear ആകും. delay: 0.2 — page load ആയ ശേഷം slight pause, then animation start."
+> 📱 "ഈ scripts `{{define \"scripts\"}}` block-ൽ ആണ്. Base layout-ൽ `{{block \"scripts\" .}}{{end}}` ഉണ്ട് — profile page override ചെയ്യും."
+
+---
+
 ## GSAP + AOS + HTMX Integration — app.js
 
 > 📱 "ഇപ്പോൾ animations add ചെയ്യാം. ഇത് app-നെ professional look കൊടുക്കും."
