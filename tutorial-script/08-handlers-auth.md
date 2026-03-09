@@ -317,12 +317,13 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.log.Info("user registered", "user_id", user.ID, "username", user.Username)
+
 	session, _ := h.store.Get(r, "session")
 	session.Values["user_id"] = user.ID
 	session.Values["username"] = user.Username
 	session.Save(r, w)
 
-	h.log.Info("user registered", "user_id", user.ID, "username", user.Username)
 	h.resp.HXRedirect(w, "/dashboard")
 }
 

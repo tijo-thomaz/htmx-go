@@ -61,7 +61,7 @@
 ### Bonus (Separate Video)
 | # | File | What Happens |
 |---|------|-------------|
-| 18 | `18-bonus-testing.md` | Tests, benchmarks, coverage |
+| 18 | `18-bonus-testing.md` | 30 tests, 5+ benchmarks, coverage (user/link/analytics repos, auth/health handlers) |
 
 ---
 
